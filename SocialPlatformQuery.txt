@@ -1,0 +1,44 @@
+use db_socialplatform;
+
+
+# 1. Seleziona gli utenti che hanno postato almeno un video
+
+SELECT DISTINCT u.username  # x escludere i dupliati
+FROM users u 
+join medias m on m.user_id = u.id 
+where m.`type`  like '%video%';
+
+
+# 2. Seleziona tutti i post senza Like (13)
+
+SELECT *
+FROM posts p 
+left join likes l on  p.id =  l.post_id 
+WHERE l.post_id is null ;
+
+
+# 3. Conta il numero di like per ogni post (165) -----> ERRORE: viene 175
+
+SELECT l.post_id , COUNT(l.post_id) as n_like
+FROM likes l
+group by l.post_id ;
+
+
+# 4. Ordina gli utenti per il numero di media caricati (25)
+
+SELECT u.id, u.username, COUNT(*) as n_media
+FROM users u 
+join medias m on m.user_id = u.id
+group BY u.id 
+ORDER BY n_media ASC ;
+
+
+# 5. Ordina gli utenti per totale di likes ricevuti nei loro posts (25) 
+
+SELECT u.id, u.username, COUNT(*) as n_likeTot
+FROM users u 
+join posts p  on u.id = p.user_id
+join likes l on  p.id =  l.post_id 
+GROUP BY u.id 
+order by n_likeTot ASC ;
+
